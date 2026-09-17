@@ -18,7 +18,7 @@ tok = AutoTokenizer.from_pretrained(MODEL_ID, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
     trust_remote_code=True,
-    torch_dtype=torch.bfloat16 if CUDA else torch.float32,
+    dtype=torch.bfloat16 if CUDA else torch.float32,
     device_map="auto" if CUDA else None,
 ).eval()
 
@@ -47,7 +47,6 @@ def chat(message, history, think, max_new_tokens, temperature):
 
 gr.ChatInterface(
     chat,
-    type="messages",
     title="Huihui-Spark-X2.5-4B-abliterated",
     description=f"Running on a Petabyte GPU · {'CUDA' if CUDA else 'CPU'} · {MODEL_ID}",
     additional_inputs=[
