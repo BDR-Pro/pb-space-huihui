@@ -1,4 +1,9 @@
 torch
-transformers>=4.51
+# The model's remote code (configuration_spark.py) targets transformers 4.x. In 5.x the RoPE
+# config became a validated dataclass field (`rope_parameters` must be a dict) and the model's
+# float `rope_theta` blows up in validate_rope with
+#   AttributeError: 'float' object has no attribute 'get'
+# Pin below 5 until huihui-ai updates the remote code.
+transformers>=4.51,<5
 accelerate
 gradio>=5
