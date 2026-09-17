@@ -15,6 +15,14 @@ shell stays off, because an open shell on a public url is a gift to whoever find
 import os
 from threading import Thread
 
+# The Petabyte gateway terminates TLS and forwards X-Forwarded-Proto, but uvicorn only BELIEVES
+# that header from an address in forwarded_allow_ips, which defaults to 127.0.0.1 — and the
+# request arrives from the docker bridge, not loopback. Without this Gradio keeps thinking it is
+# on http and emits http:// URLs for its own JS and CSS, which the browser blocks as mixed
+# content on an https page: the space serves 200s, accepts the login, and renders BLANK.
+# Set before gradio imports uvicorn, since uvicorn reads it when the Config is built.
+os.environ.setdefault("FORWARDED_ALLOW_IPS", "*")
+
 import gradio as gr
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
